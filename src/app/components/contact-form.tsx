@@ -7,38 +7,30 @@ import { Send, Mail, User, CheckCircle2, Loader2, AlertCircle } from "lucide-rea
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
-  // Función auxiliar para codificar los datos manualmente
-  // Esto asegura que los datos lleguen a Netlify en el formato exacto que espera
-  const encode = (data: any) => {
-    return Object.keys(data)
-      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-      .join("&");
-  }
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("submitting");
 
-    const formData = new FormData(e.currentTarget);
-    
-    // Extraemos los valores manualmente para tener control total
-    const payload = {
-      "form-name": "contacto-web", // Debe coincidir con el input hidden y el HTML
-      name: formData.get("name"),
-      email: formData.get("email"),
-      message: formData.get("message"),
-      "bot-field": formData.get("bot-field") // Campo anti-spam
-    };
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    // SOLUCIÓN DEL FORO:
+    // Añadimos explícitamente el nombre del formulario al objeto FormData.
+    // Esto asegura que Netlify sepa a qué formulario pertenece este envío.
+    formData.append("form-name", "contacto-web");
 
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode(payload), // Usamos nuestra función segura
+        // Usamos URLSearchParams para convertir los datos al formato estándar que espera Netlify
+        body: new URLSearchParams(formData as any).toString(),
       });
 
       if (response.ok) {
         setStatus("success");
+        // Opcional: limpiar el formulario si es necesario, aunque aquí mostramos la vista de éxito
+        // form.reset(); 
       } else {
         console.error("Error Netlify:", response.status, response.statusText);
         setStatus("error");
@@ -132,15 +124,15 @@ export function ContactForm() {
                 exit={{ opacity: 0, y: -20 }}
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
-                // Añadimos atributos para ayudar al bot de Netlify si escanea el JS
+                // Mantenemos los atributos estándar de Netlify
                 name="contacto-web"
                 data-netlify="true"
                 data-netlify-honeypot="bot-field"
               >
-                {/* 1. Nombre del formulario (CRÍTICO) */}
+                {/* Input oculto estándar (aunque lo añadimos por JS, es bueno dejarlo por seguridad) */}
                 <input type="hidden" name="form-name" value="contacto-web" />
                 
-                {/* 2. Campo trampa para bots (Invisible) */}
+                {/* Campo trampa para bots */}
                 <p className="hidden">
                   <label>
                     Don’t fill this out if you’re human: <input name="bot-field" />
@@ -221,6 +213,6 @@ export function ContactForm() {
           </AnimatePresence>
         </motion.div>
       </div>
-   </section>
+    </section>
   );
 }

@@ -15,7 +15,9 @@ export function ContactForm() {
     const formData = new FormData(myForm);
 
     try {
-      const response = await fetch("/", {
+      // CAMBIO CLAVE: Enviamos la petición a "/__forms.html" en lugar de "/"
+      // Esto evita que el router de Next.js intercepte el mensaje.
+      const response = await fetch("/__forms.html", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(formData as any).toString(),
@@ -24,11 +26,11 @@ export function ContactForm() {
       if (response.ok) {
         setStatus("success");
       } else {
-        console.error("Error técnico de Netlify:", response.status);
+        console.error("Error Netlify:", response.status, response.statusText);
         setStatus("error");
       }
     } catch (error) {
-      console.error("Error de conexión:", error);
+      console.error("Error de red:", error);
       setStatus("error");
     }
   };
@@ -114,12 +116,10 @@ export function ContactForm() {
                 exit={{ opacity: 0, y: -20 }}
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
-                // SIMPLICIDAD TOTAL: Como en la imagen
+                // Nombre debe coincidir con __forms.html
                 name="contact"
-                method="POST"
-                data-netlify="true"
               >
-                {/* Input oculto OBLIGATORIO en React para que el fetch sepa el nombre */}
+                {/* Input oculto necesario para FormData */}
                 <input type="hidden" name="form-name" value="contact" />
 
                 <div className="space-y-2">

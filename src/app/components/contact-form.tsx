@@ -121,12 +121,18 @@ export function ContactForm() {
                 name="contact"
                 method="POST"
                 data-netlify="true"
+                netlify-honeypot="bot-field" // Añadido para consistencia
                 
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
               >
                 {/* Inputs ocultos obligatorios para Netlify */}
                 <input type="hidden" name="form-name" value="contact" />
+                
+                {/* CAMPO HONEYPOT NUEVO: Invisible para humanos, trampa para bots */}
+                <div className="hidden">
+                  <input name="bot-field" />
+                </div>
 
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-slate-300">

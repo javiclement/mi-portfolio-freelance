@@ -7,11 +7,12 @@
 </head>
 <body>
     <!-- 
-      Definición ESTÁNDAR según documentación oficial.
-      Usamos 'data-netlify="true"' explícitamente.
+      Formulario de ayuda para Netlify.
+      Debe coincidir EXACTAMENTE con el formulario de React.
     -->
-    <form name="contact-form" data-netlify="true" hidden>
-      <input type="hidden" name="form-name" value="contact-form" />
+    <form name="contacto-web" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contacto-web" />
+      <input name="bot-field" />
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>

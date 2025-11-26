@@ -7,12 +7,11 @@
 </head>
 <body>
     <!-- 
-      Formulario limpio y renombrado para forzar detección nueva.
-      Sin honeypot para evitar bloqueos por spam.
-      Este archivo es invisible para el usuario pero esencial para el bot de Netlify.
+      Definición ESTÁNDAR según documentación oficial.
+      Usamos 'data-netlify="true"' explícitamente.
     -->
-    <form name="formulario-web" netlify hidden>
-      <input type="hidden" name="form-name" value="formulario-web" />
+    <form name="contact-form" data-netlify="true" hidden>
+      <input type="hidden" name="form-name" value="contact-form" />
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>

@@ -7,42 +7,30 @@ import { Send, Mail, User, CheckCircle2, Loader2, AlertCircle } from "lucide-rea
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
-  // Función estándar de Netlify para codificar datos
-  const encode = (data: Record<string, string>) => {
-    return Object.keys(data)
-      .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-      .join("&");
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("submitting");
 
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const message = formData.get("message") as string;
+    const myForm = e.currentTarget;
+    const formData = new FormData(myForm);
 
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode({
-          "form-name": "formulario-web", // Nuevo nombre
-          name,
-          email,
-          message,
-        }),
+        // Método oficial de la documentación de Netlify:
+        // Convertimos los datos a un string codificado como URL
+        body: new URLSearchParams(formData as any).toString(),
       });
 
       if (response.ok) {
         setStatus("success");
       } else {
-        console.error("Error Netlify:", response.status);
+        console.error("Error Netlify:", response.status, response.statusText);
         setStatus("error");
       }
     } catch (error) {
-      console.error("Error Red:", error);
+      console.error("Error de red:", error);
       setStatus("error");
     }
   };
@@ -54,6 +42,7 @@ export function ContactForm() {
       </div>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* Columna de Información */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -91,6 +80,7 @@ export function ContactForm() {
           </div>
         </motion.div>
 
+        {/* Columna del Formulario */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -128,8 +118,14 @@ export function ContactForm() {
                 exit={{ opacity: 0, y: -20 }}
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
+                // Añadimos atributos aquí también por redundancia para Netlify
+                name="contact-form"
+                data-netlify="true"
               >
-                <input type="hidden" name="form-name" value="formulario-web" />
+                {/* INPUT OCULTO CRÍTICO: 
+                  El valor debe coincidir EXACTAMENTE con el 'name' del form en __forms.html
+                */}
+                <input type="hidden" name="form-name" value="contact-form" />
 
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-slate-300">

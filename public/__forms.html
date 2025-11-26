@@ -7,13 +7,11 @@
 </head>
 <body>
     <!-- 
-      IMPORTANTE:
-      Este formulario oculto le dice a Netlify: "Oye, voy a usar un formulario llamado 'contacto-web'".
-      Sin este archivo, Netlify ignorará los envíos que hagas desde React.
+      Formulario "contacto-final".
+      Sin honeypot, sin complicaciones. Solo lo básico.
     -->
-    <form name="contacto-web" data-netlify="true" netlify-honeypot="bot-field" hidden>
-      <input type="hidden" name="form-name" value="contacto-web" />
-      <input name="bot-field" />
+    <form name="contacto-final" data-netlify="true" hidden>
+      <input type="hidden" name="form-name" value="contacto-final" />
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>

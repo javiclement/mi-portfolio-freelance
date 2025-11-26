@@ -11,31 +11,28 @@ export function ContactForm() {
     e.preventDefault();
     setStatus("submitting");
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    // SOLUCIÓN DEL FORO:
-    // Añadimos explícitamente el nombre del formulario al objeto FormData.
-    // Esto asegura que Netlify sepa a qué formulario pertenece este envío.
-    formData.append("form-name", "contacto-web");
+    const myForm = e.currentTarget;
+    const formData = new FormData(myForm);
 
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        // Usamos URLSearchParams para convertir los datos al formato estándar que espera Netlify
+        // Convertimos el FormData directamente. 
+        // NO añadimos "form-name" extra aquí porque ya está en el input hidden.
         body: new URLSearchParams(formData as any).toString(),
       });
 
       if (response.ok) {
         setStatus("success");
-        // Opcional: limpiar el formulario si es necesario, aunque aquí mostramos la vista de éxito
-        // form.reset(); 
       } else {
+        // Alerta visible para depuración (nos dirá si es un 404, 500, etc.)
+        alert(`Error al enviar: ${response.status} ${response.statusText}`);
         console.error("Error Netlify:", response.status, response.statusText);
         setStatus("error");
       }
     } catch (error) {
+      alert(`Error de red: ${error}`);
       console.error("Error de red:", error);
       setStatus("error");
     }
@@ -48,7 +45,6 @@ export function ContactForm() {
       </div>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Columna de Información */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -60,7 +56,7 @@ export function ContactForm() {
             <span className="text-primary">Idea</span>
           </h2>
           <p className="text-slate-400 text-lg mb-10 max-w-md">
-            ¿Tienes un proyecto en mente? Escríbeme y veamos cómo podemos hacerlo realidad. Sin intermediarios.
+            ¿Tienes un proyecto en mente? Escríbeme y veamos cómo podemos hacerlo realidad.
           </p>
 
           <div className="space-y-6">
@@ -86,7 +82,6 @@ export function ContactForm() {
           </div>
         </motion.div>
 
-        {/* Columna del Formulario */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -105,15 +100,13 @@ export function ContactForm() {
                 <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <CheckCircle2 className="w-10 h-10 text-green-500" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">¡Mensaje Enviado!</h3>
-                <p className="text-slate-400">
-                  Gracias por contactar. Te responderé en menos de 24 horas.
-                </p>
+                <h3 className="text-2xl font-bold text-white">¡Recibido!</h3>
+                <p className="text-slate-400">Gracias por contactar.</p>
                 <button
                   onClick={() => setStatus("idle")}
                   className="mt-6 text-primary hover:text-white transition-colors text-sm font-medium"
                 >
-                  Enviar otro mensaje
+                  Enviar otro
                 </button>
               </motion.div>
             ) : (
@@ -124,25 +117,18 @@ export function ContactForm() {
                 exit={{ opacity: 0, y: -20 }}
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
-                // Mantenemos los atributos estándar de Netlify
-                name="contacto-web"
+                // Importante: Coincidir nombre con __forms.html
+                name="contacto-final"
                 data-netlify="true"
-                data-netlify-honeypot="bot-field"
               >
-                {/* Input oculto estándar (aunque lo añadimos por JS, es bueno dejarlo por seguridad) */}
-                <input type="hidden" name="form-name" value="contacto-web" />
-                
-                {/* Campo trampa para bots */}
-                <p className="hidden">
-                  <label>
-                    Don’t fill this out if you’re human: <input name="bot-field" />
-                  </label>
-                </p>
+                {/* INPUT OCULTO ÚNICO: 
+                  Esta es la única fuente de verdad para el nombre del formulario.
+                  Al recogerlo con 'new FormData(e.currentTarget)', este valor se incluye automáticamente.
+                */}
+                <input type="hidden" name="form-name" value="contacto-final" />
 
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium text-slate-300">
-                    Nombre
-                  </label>
+                  <label htmlFor="name" className="text-sm font-medium text-slate-300">Nombre</label>
                   <input
                     type="text"
                     name="name"
@@ -150,14 +136,11 @@ export function ContactForm() {
                     required
                     disabled={status === "submitting"}
                     className="w-full bg-background/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
-                    placeholder="Tu nombre"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-slate-300">
-                    Email
-                  </label>
+                  <label htmlFor="email" className="text-sm font-medium text-slate-300">Email</label>
                   <input
                     type="email"
                     name="email"
@@ -165,14 +148,11 @@ export function ContactForm() {
                     required
                     disabled={status === "submitting"}
                     className="w-full bg-background/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
-                    placeholder="tu@email.com"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-medium text-slate-300">
-                    ¿En qué puedo ayudarte?
-                  </label>
+                  <label htmlFor="message" className="text-sm font-medium text-slate-300">Mensaje</label>
                   <textarea
                     name="message"
                     id="message"
@@ -180,14 +160,13 @@ export function ContactForm() {
                     required
                     disabled={status === "submitting"}
                     className="w-full bg-background/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none disabled:opacity-50"
-                    placeholder="Cuéntame un poco sobre tu proyecto..."
                   ></textarea>
                 </div>
 
                 {status === "error" && (
                   <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 p-3 rounded-lg">
                     <AlertCircle className="w-4 h-4" />
-                    Hubo un error al enviar. Por favor intenta de nuevo.
+                    Error al enviar. Intenta de nuevo.
                   </div>
                 )}
 
@@ -204,7 +183,7 @@ export function ContactForm() {
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      Enviar Mensaje
+                      Enviar
                     </>
                   )}
                 </button>

@@ -7,15 +7,12 @@
 </head>
 <body>
     <!-- 
-      Este archivo define la estructura EXACTA que Netlify debe esperar.
-      Si React envía algo diferente a esto, el envío fallará.
+      Formulario limpio y renombrado para forzar detección nueva.
+      Sin honeypot para evitar bloqueos por spam.
+      Este archivo es invisible para el usuario pero esencial para el bot de Netlify.
     -->
-    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
-      <input type="hidden" name="form-name" value="contact" />
-      
-      <!-- ESTA LÍNEA FALTABA: El input físico para la trampa anti-bots -->
-      <input name="bot-field" />
-      
+    <form name="formulario-web" netlify hidden>
+      <input type="hidden" name="form-name" value="formulario-web" />
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>

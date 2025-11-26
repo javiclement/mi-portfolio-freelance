@@ -7,43 +7,42 @@ import { Send, Mail, User, CheckCircle2, Loader2, AlertCircle } from "lucide-rea
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
+  // Función estándar de Netlify para codificar datos
+  const encode = (data: Record<string, string>) => {
+    return Object.keys(data)
+      .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+      .join("&");
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("submitting");
 
     const formData = new FormData(e.currentTarget);
-    
-    // Crear el cuerpo del mensaje manualmente para asegurar el formato correcto
-    const data = new URLSearchParams();
-    // 1. Campo obligatorio para Netlify (debe coincidir con el 'name' del form en HTML)
-    data.set("form-name", "contact");
-    
-    // 2. Añadir el resto de campos si existen
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const message = formData.get("message") as string;
-    const botField = formData.get("bot-field") as string;
-
-    if (name) data.set("name", name);
-    if (email) data.set("email", email);
-    if (message) data.set("message", message);
-    if (botField) data.set("bot-field", botField);
 
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: data.toString(),
+        body: encode({
+          "form-name": "formulario-web", // Nuevo nombre
+          name,
+          email,
+          message,
+        }),
       });
 
       if (response.ok) {
         setStatus("success");
       } else {
-        console.error("Error en la respuesta de Netlify:", response.status, response.statusText);
+        console.error("Error Netlify:", response.status);
         setStatus("error");
       }
     } catch (error) {
-      console.error("Error de red:", error);
+      console.error("Error Red:", error);
       setStatus("error");
     }
   };
@@ -55,7 +54,6 @@ export function ContactForm() {
       </div>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Info Column */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -93,7 +91,6 @@ export function ContactForm() {
           </div>
         </motion.div>
 
-        {/* Form Column */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -132,17 +129,7 @@ export function ContactForm() {
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
               >
-                {/* NOTA IMPORTANTE:
-                   Los atributos 'netlify' y 'data-netlify' NO son necesarios aquí en JSX
-                   porque estamos haciendo el envío manual con fetch().
-                   Sin embargo, los inputs ocultos SÍ son necesarios para que FormData los capture.
-                */}
-                <input type="hidden" name="form-name" value="contact" />
-                
-                {/* Campo trampa para bots (Honeypot) - Debe coincidir con el __forms.html */}
-                <div className="hidden">
-                  <input name="bot-field" />
-                </div>
+                <input type="hidden" name="form-name" value="formulario-web" />
 
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-slate-300">

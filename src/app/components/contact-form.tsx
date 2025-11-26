@@ -221,6 +221,6 @@ export function ContactForm() {
           </AnimatePresence>
         </motion.div>
       </div>
-    </section>
+   </section>
   );
 }

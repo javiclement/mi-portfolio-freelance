@@ -14,29 +14,21 @@ export function ContactForm() {
     const myForm = e.currentTarget;
     const formData = new FormData(myForm);
 
-    // SOLUCIÓN DEL FORO APLICADA:
-    // Forzamos el nombre del formulario directamente en los datos
-    // Esto asegura que Netlify sepa EXACTAMENTE a qué buzón va este mensaje.
-    // Usamos 'set' para sobrescribir cualquier valor anterior y evitar duplicados.
-    formData.set("form-name", "contacto-v2");
-
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        // Convertimos a string de URL estándar
         body: new URLSearchParams(formData as any).toString(),
       });
 
       if (response.ok) {
         setStatus("success");
       } else {
-        // En caso de error, mostramos el código técnico para ayudar
-        alert(`Error técnico de Netlify: ${response.status}`);
+        console.error("Error técnico de Netlify:", response.status);
         setStatus("error");
       }
     } catch (error) {
-      alert(`Error de conexión: ${error}`);
+      console.error("Error de conexión:", error);
       setStatus("error");
     }
   };
@@ -103,13 +95,15 @@ export function ContactForm() {
                 <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <CheckCircle2 className="w-10 h-10 text-green-500" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">¡Recibido!</h3>
-                <p className="text-slate-400">Gracias por contactar.</p>
+                <h3 className="text-2xl font-bold text-white">¡Mensaje Enviado!</h3>
+                <p className="text-slate-400">
+                  Gracias por contactar. Te responderé en menos de 24 horas.
+                </p>
                 <button
                   onClick={() => setStatus("idle")}
                   className="mt-6 text-primary hover:text-white transition-colors text-sm font-medium"
                 >
-                  Enviar otro
+                  Enviar otro mensaje
                 </button>
               </motion.div>
             ) : (
@@ -120,14 +114,13 @@ export function ContactForm() {
                 exit={{ opacity: 0, y: -20 }}
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
-                // Actualizamos el nombre a v2
-                name="contacto-v2"
+                // SIMPLICIDAD TOTAL: Como en la imagen
+                name="contact"
+                method="POST"
                 data-netlify="true"
               >
-                {/* El input oculto sigue siendo necesario para que FormData lo recoja inicialmente,
-                  aunque luego lo reforcemos en el JS.
-                */}
-                <input type="hidden" name="form-name" value="contacto-v2" />
+                {/* Input oculto OBLIGATORIO en React para que el fetch sepa el nombre */}
+                <input type="hidden" name="form-name" value="contact" />
 
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-slate-300">Nombre</label>
@@ -168,7 +161,7 @@ export function ContactForm() {
                 {status === "error" && (
                   <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 p-3 rounded-lg">
                     <AlertCircle className="w-4 h-4" />
-                    Error al enviar. Intenta de nuevo.
+                    Hubo un error al enviar. Por favor intenta de nuevo.
                   </div>
                 )}
 

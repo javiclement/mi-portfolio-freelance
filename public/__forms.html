@@ -7,12 +7,15 @@
 </head>
 <body>
     <!-- 
-      Este archivo es invisible para los usuarios.
-      Sirve SOLO para que Netlify detecte los campos del formulario durante el build
-      ya que Next.js los oculta dentro del JavaScript.
+      Este archivo define la estructura EXACTA que Netlify debe esperar.
+      Si React envía algo diferente a esto, el envío fallará.
     -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
       <input type="hidden" name="form-name" value="contact" />
+      
+      <!-- ESTA LÍNEA FALTABA: El input físico para la trampa anti-bots -->
+      <input name="bot-field" />
+      
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>

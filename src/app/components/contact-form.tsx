@@ -13,22 +13,37 @@ export function ContactForm() {
 
     const formData = new FormData(e.currentTarget);
     
+    // Crear el cuerpo del mensaje manualmente para asegurar el formato correcto
+    const data = new URLSearchParams();
+    // 1. Campo obligatorio para Netlify (debe coincidir con el 'name' del form en HTML)
+    data.set("form-name", "contact");
+    
+    // 2. Añadir el resto de campos si existen
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const message = formData.get("message") as string;
+    const botField = formData.get("bot-field") as string;
+
+    if (name) data.set("name", name);
+    if (email) data.set("email", email);
+    if (message) data.set("message", message);
+    if (botField) data.set("bot-field", botField);
+
     try {
-      // Enviamos los datos a Netlify usando fetch
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        // Convertimos los datos del formulario a string legible por Netlify
-        body: new URLSearchParams(formData as any).toString(),
+        body: data.toString(),
       });
 
       if (response.ok) {
         setStatus("success");
       } else {
+        console.error("Error en la respuesta de Netlify:", response.status, response.statusText);
         setStatus("error");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error de red:", error);
       setStatus("error");
     }
   };
@@ -88,7 +103,6 @@ export function ContactForm() {
         >
           <AnimatePresence mode="wait">
             {status === "success" ? (
-              // VISTA DE ÉXITO
               <motion.div
                 key="success"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -110,26 +124,22 @@ export function ContactForm() {
                 </button>
               </motion.div>
             ) : (
-              // VISTA DEL FORMULARIO
               <motion.form
                 key="form"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, y: -20 }}
-                
-                // Configuración Netlify
-                name="contact"
-                method="POST"
-                data-netlify="true"
-                netlify-honeypot="bot-field" // Añadido para consistencia
-                
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
               >
-                {/* Inputs ocultos obligatorios para Netlify */}
+                {/* NOTA IMPORTANTE:
+                   Los atributos 'netlify' y 'data-netlify' NO son necesarios aquí en JSX
+                   porque estamos haciendo el envío manual con fetch().
+                   Sin embargo, los inputs ocultos SÍ son necesarios para que FormData los capture.
+                */}
                 <input type="hidden" name="form-name" value="contact" />
                 
-                {/* CAMPO HONEYPOT NUEVO: Invisible para humanos, trampa para bots */}
+                {/* Campo trampa para bots (Honeypot) - Debe coincidir con el __forms.html */}
                 <div className="hidden">
                   <input name="bot-field" />
                 </div>

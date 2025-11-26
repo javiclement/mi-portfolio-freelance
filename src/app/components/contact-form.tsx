@@ -14,26 +14,29 @@ export function ContactForm() {
     const myForm = e.currentTarget;
     const formData = new FormData(myForm);
 
+    // SOLUCIÓN DEL FORO APLICADA:
+    // Forzamos el nombre del formulario directamente en los datos
+    // Esto asegura que Netlify sepa EXACTAMENTE a qué buzón va este mensaje.
+    // Usamos 'set' para sobrescribir cualquier valor anterior y evitar duplicados.
+    formData.set("form-name", "contacto-v2");
+
     try {
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        // Convertimos el FormData directamente. 
-        // NO añadimos "form-name" extra aquí porque ya está en el input hidden.
+        // Convertimos a string de URL estándar
         body: new URLSearchParams(formData as any).toString(),
       });
 
       if (response.ok) {
         setStatus("success");
       } else {
-        // Alerta visible para depuración (nos dirá si es un 404, 500, etc.)
-        alert(`Error al enviar: ${response.status} ${response.statusText}`);
-        console.error("Error Netlify:", response.status, response.statusText);
+        // En caso de error, mostramos el código técnico para ayudar
+        alert(`Error técnico de Netlify: ${response.status}`);
         setStatus("error");
       }
     } catch (error) {
-      alert(`Error de red: ${error}`);
-      console.error("Error de red:", error);
+      alert(`Error de conexión: ${error}`);
       setStatus("error");
     }
   };
@@ -117,15 +120,14 @@ export function ContactForm() {
                 exit={{ opacity: 0, y: -20 }}
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
-                // Importante: Coincidir nombre con __forms.html
-                name="contacto-final"
+                // Actualizamos el nombre a v2
+                name="contacto-v2"
                 data-netlify="true"
               >
-                {/* INPUT OCULTO ÚNICO: 
-                  Esta es la única fuente de verdad para el nombre del formulario.
-                  Al recogerlo con 'new FormData(e.currentTarget)', este valor se incluye automáticamente.
+                {/* El input oculto sigue siendo necesario para que FormData lo recoja inicialmente,
+                  aunque luego lo reforcemos en el JS.
                 */}
-                <input type="hidden" name="form-name" value="contacto-final" />
+                <input type="hidden" name="form-name" value="contacto-v2" />
 
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-slate-300">Nombre</label>

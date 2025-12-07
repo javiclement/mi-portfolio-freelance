@@ -3,21 +3,22 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Code2 } from "lucide-react";
+import { Menu, X, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Enlaces de navegación incluyendo el Blog
 const navLinks = [
-  { name: "Servicios", href: "#services" },
-  { name: "Stack", href: "#stack" },
-  { name: "Proyectos", href: "#projects" },
-  { name: "Contacto", href: "#contact" },
+  { name: "Servicios", href: "/#services" },
+  { name: "Stack", href: "/#stack" },
+  { name: "Proyectos", href: "/#projects" },
+  { name: "Blog", href: "/blog" },
+  { name: "Contacto", href: "/#contact" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Detectar scroll para aumentar la opacidad del glassmorphism
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -34,15 +35,17 @@ export function Navbar() {
       )}
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        {/* Logo */}
+        {/* LOGO / MARCA */}
         <Link href="/" className="flex items-center gap-2 group">
           <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-            <Code2 className="w-6 h-6 text-primary" />
+            <Smartphone className="w-6 h-6 text-primary" />
           </div>
-          <span className="font-bold text-xl tracking-tight">Javi Clement</span>
+          <span className="font-bold text-xl tracking-tight text-white">
+            Nativiza<span className="text-primary">.</span>
+          </span>
         </Link>
 
-        {/* Desktop Menu */}
+        {/* Menú Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
@@ -54,14 +57,14 @@ export function Navbar() {
             </Link>
           ))}
           <Link
-            href="#contact"
+            href="/#contact"
             className="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all shadow-[0_0_20px_-5px_rgba(99,102,241,0.4)]"
           >
             Iniciar Proyecto
           </Link>
         </div>
 
-        {/* Mobile Toggle */}
+        {/* Botón Menú Móvil */}
         <button
           className="md:hidden text-slate-300 hover:text-white"
           onClick={() => setIsOpen(!isOpen)}
@@ -70,7 +73,7 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu (AnimatePresence placeholder) */}
+      {/* Menú Móvil Desplegable */}
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}

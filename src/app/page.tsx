@@ -24,7 +24,7 @@ export default function Home() {
       
       {/* Footer Personal */}
       <footer className="py-8 text-center text-slate-600 text-sm border-t border-white/5 bg-background">
-        <p>© {new Date().getFullYear()} Javi Clement. Diseño y código con pasión.</p>
+        <p>© {new Date().getFullYear()} Nativiza. Diseño y código con pasión.</p>
       </footer>
     </div>
   );

@@ -63,7 +63,7 @@ export function ContactForm() {
               </div>
               <div>
                 <h4 className="text-white font-medium">Email</h4>
-                <p className="text-slate-400 text-sm">hola@javiclement.com</p>
+                <p className="text-slate-400 text-sm">javiclement@gmail.com</p>
               </div>
             </div>
 

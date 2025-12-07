@@ -9,9 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Mapeo semántico de nuestros Design Tokens
         background: "#020617", // Slate-950
-        foreground: "#f8fafc", // Slate-50 (AQUÍ ESTABA EL ERROR, FALTABA ESTA LÍNEA)
+        foreground: "#f8fafc", // Slate-50
         surface: "#0f172a",    // Slate-900
         primary: {
           DEFAULT: "#6366f1", // Indigo-500
@@ -25,6 +24,30 @@ const config: Config = {
         muted: {
           DEFAULT: "#1e293b", // Slate-800
           foreground: "#94a3b8", // Slate-400
+        },
+      },
+      // Añadimos configuración para el plugin de tipografía (prose)
+      typography: {
+        DEFAULT: {
+          css: {
+            color: '#94a3b8', // slate-400
+            'h1, h2, h3, h4': {
+              color: '#f8fafc', // slate-50
+              fontWeight: '700',
+            },
+            strong: {
+              color: '#f8fafc',
+            },
+            a: {
+              color: '#6366f1', // primary
+              '&:hover': {
+                color: '#4f46e5',
+              },
+            },
+            code: {
+              color: '#8b5cf6', // secondary
+            },
+          },
         },
       },
       backgroundImage: {
@@ -47,6 +70,8 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'), // Activamos el plugin aquí
+  ],
 };
 export default config;

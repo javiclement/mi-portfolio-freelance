@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google"; // <--- Importamos la librería
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -30,9 +31,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  // --- VERIFICACIÓN DE GOOGLE ---
   verification: {
-    google: "PDi4fee8K7AeR25dKQ-n9D5FSpiHUtWF0wJDwsID0dI", // <--- Pega aquí el código que te dio Search Console (solo el código, no la etiqueta completa)
+    // Mantén aquí tu código de verificación que ya pusiste
+    google: "PDi4fee8K7AeR25dKQ-n9D5FSpiHUtWF0wJDwsID0dI", 
   },
 };
 
@@ -51,6 +52,12 @@ export default function RootLayout({
         <main className="min-h-screen relative overflow-hidden">
           {children}
         </main>
+
+        {/* Google Analytics 4
+          Se carga de forma optimizada. 
+          Reemplaza "G-XXXXXXXXXX" por tu ID real.
+        */}
+        <GoogleAnalytics gaId="G-0SBVB8CVQR" />
       </body>
     </html>
   );

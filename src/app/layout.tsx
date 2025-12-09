@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google"; // <--- Importamos la librería
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer"; // <--- 1. Importamos el Footer
 import { JsonLd } from "@/components/shared/json-ld";
+import { AnalyticsConsent } from "@/components/layout/analytics-consent";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// URL de producción
 const BASE_URL = "https://nativiza.netlify.app"; 
 
 export const metadata: Metadata = {
@@ -32,8 +32,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   verification: {
-    // Mantén aquí tu código de verificación que ya pusiste
-    google: "PDi4fee8K7AeR25dKQ-n9D5FSpiHUtWF0wJDwsID0dI", 
+    google: "PDi4fee8K7AeR25dKQ-n9D5FSpiHUtWF0wJDwsID0dI",
   },
 };
 
@@ -45,19 +44,18 @@ export default function RootLayout({
   return (
     <html lang="es" className="scroll-smooth">
       <body className={inter.className}>
-        {/* Componente invisible para SEO en IA */}
         <JsonLd />
         
         <Navbar />
+        
         <main className="min-h-screen relative overflow-hidden">
           {children}
         </main>
 
-        {/* Google Analytics 4
-          Se carga de forma optimizada. 
-          Reemplaza "G-XXXXXXXXXX" por tu ID real.
-        */}
-        <GoogleAnalytics gaId="G-0SBVB8CVQR" />
+        {/* 2. Añadimos el Footer aquí para que salga en todas las páginas */}
+        <Footer />
+
+        <AnalyticsConsent gaId="G-0SBVB8CVQR" />
       </body>
     </html>
   );

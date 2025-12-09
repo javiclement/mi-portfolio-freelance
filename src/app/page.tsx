@@ -21,11 +21,6 @@ export default function Home() {
 
       {/* 5. Contacto (Trato directo) */}
       <ContactForm />
-      
-      {/* Footer Personal */}
-      <footer className="py-8 text-center text-slate-600 text-sm border-t border-white/5 bg-background">
-        <p>© {new Date().getFullYear()} Nativiza. Diseño y código con pasión.</p>
-      </footer>
     </div>
   );
 }

@@ -1,0 +1,51 @@
+---
+title: "Alerta Crítica: Vulnerabilidad en React y Next.js (CVE-2025-55182)"
+date: "2025-12-09"
+description: "Detectada una vulnerabilidad grave en versiones recientes de Next.js 15 y 16. Te explico qué ha pasado y cómo proteger tu web inmediatamente."
+tags: ["Seguridad", "Next.js", "React", "Urgente"]
+---
+
+La seguridad web no es algo que se pueda posponer. Hace apenas unas horas, se ha hecho pública una vulnerabilidad crítica (identificada como **CVE-2025-55182**) que afecta a las versiones más modernas de React y Next.js.
+
+Si tu proyecto utiliza **Next.js 15 o 16**, o versiones recientes de React con Server Components, es vital que leas esto y actúes rápido.
+
+![Protección ante código malicioso en Nextjs](/images/blog/alerta-seguridad-nextjs.jpg)
+
+## ¿Qué ha pasado?
+
+Se ha descubierto un fallo en el protocolo de *Server Functions* de React, una característica clave de los nuevos React Server Components (RSC).
+
+En configuraciones vulnerables, un atacante podría manipular una petición para **ejecutar código arbitrario** en tu servidor. Esto es lo que técnicamente se conoce como RCE (*Remote Code Execution*), y es uno de los fallos de seguridad más graves que pueden existir.
+
+### ¿A quién afecta?
+
+El fallo afecta a todos los frameworks que implementan RSC, pero específicamente debes preocuparte si usas:
+
+* **Next.js 15:** Versiones desde la 15.0.0 hasta la 15.5.6.
+* **Next.js 16:** Versiones hasta la 16.0.6.
+* **React:** Versiones 19.0, 19.1 y 19.2.
+
+## La Solución: Actualizar Inmediatamente
+
+La buena noticia es que los equipos de Next.js y React han reaccionado a la velocidad de la luz y ya han publicado parches de seguridad.
+
+Si eres cliente de **Nativiza**, no tienes que preocuparte: **ya he auditado y actualizado todos los proyectos bajo mi mantenimiento** para asegurarme de que están blindados contra esta amenaza.
+
+### Cómo arreglarlo tú mismo
+
+Si gestionas tu propio proyecto, debes actualizar tus dependencias a las versiones parcheadas (Next.js 15.5.7+ o 16.0.7+).
+
+Ejecuta este comando en tu terminal:
+
+```bash
+npm install next@latest react@latest react-dom@latest
+```
+## Netlify al rescate
+
+Una de las razones por las que confío en plataformas como **Netlify** para mis clientes es su capa de seguridad proactiva. Netlify desplegó un parche a nivel de infraestructura el 3 de diciembre que bloquea los intentos de explotación de esta vulnerabilidad.
+
+Esto significa que, si tu web está alojada en Netlify (como todas las que desarrollo en Nativiza), has estado protegido por su cortafuegos incluso antes de actualizar el código. Aun así, la actualización del código es obligatoria para garantizar la seguridad total a futuro.
+
+La tecnología avanza rápido, y las amenazas también. Mantener tu web actualizada no es un lujo, es una necesidad para proteger tu negocio y los datos de tus usuarios.
+
+Si necesitas ayuda para auditar la seguridad de tu web o quieres migrar a una arquitectura más segura y moderna, [hablemos](/#contact).

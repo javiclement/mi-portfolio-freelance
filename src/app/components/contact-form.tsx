@@ -1,39 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useForm, ValidationError } from '@formspree/react';
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Mail, User, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 
 export function ContactForm() {
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setStatus("submitting");
-
-    const myForm = e.currentTarget;
-    const formData = new FormData(myForm);
-
-    try {
-      // CAMBIO CLAVE: Enviamos la petición a "/__forms.html" en lugar de "/"
-      // Esto evita que el router de Next.js intercepte el mensaje.
-      const response = await fetch("/__forms.html", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData as any).toString(),
-      });
-
-      if (response.ok) {
-        setStatus("success");
-      } else {
-        console.error("Error Netlify:", response.status, response.statusText);
-        setStatus("error");
-      }
-    } catch (error) {
-      console.error("Error de red:", error);
-      setStatus("error");
-    }
-  };
+  // PEGA AQUÍ TU ID DE FORMSPREE (ej: "mznqkpwl")
+  const [state, handleSubmit] = useForm("xnnegvgq");
 
   return (
     <section id="contact" className="py-24 px-4 relative overflow-hidden">
@@ -42,6 +15,7 @@ export function ContactForm() {
       </div>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* Columna de Información */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -53,7 +27,7 @@ export function ContactForm() {
             <span className="text-primary">Idea</span>
           </h2>
           <p className="text-slate-400 text-lg mb-10 max-w-md">
-            ¿Tienes un proyecto en mente? Escríbeme y veamos cómo podemos hacerlo realidad.
+            ¿Tienes un proyecto en mente? Escríbeme y veamos cómo podemos hacerlo realidad. Sin intermediarios.
           </p>
 
           <div className="space-y-6">
@@ -79,6 +53,7 @@ export function ContactForm() {
           </div>
         </motion.div>
 
+        {/* Columna del Formulario */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -87,7 +62,7 @@ export function ContactForm() {
           className="bg-surface/50 backdrop-blur-md p-8 rounded-3xl border border-white/10 min-h-[400px] flex items-center"
         >
           <AnimatePresence mode="wait">
-            {status === "success" ? (
+            {state.succeeded ? (
               <motion.div
                 key="success"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -101,8 +76,9 @@ export function ContactForm() {
                 <p className="text-slate-400">
                   Gracias por contactar. Te responderé en menos de 24 horas.
                 </p>
+                {/* Nota: Formspree no tiene método de reset fácil, así que recargar la página es lo más simple si quieren enviar otro */}
                 <button
-                  onClick={() => setStatus("idle")}
+                  onClick={() => window.location.reload()}
                   className="mt-6 text-primary hover:text-white transition-colors text-sm font-medium"
                 >
                   Enviar otro mensaje
@@ -116,61 +92,69 @@ export function ContactForm() {
                 exit={{ opacity: 0, y: -20 }}
                 onSubmit={handleSubmit}
                 className="space-y-6 w-full"
-                // Nombre debe coincidir con __forms.html
-                name="contact"
               >
-                {/* Input oculto necesario para FormData */}
-                <input type="hidden" name="form-name" value="contact" />
-
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium text-slate-300">Nombre</label>
+                  <label htmlFor="name" className="text-sm font-medium text-slate-300">
+                    Nombre
+                  </label>
                   <input
+                    id="name"
                     type="text"
                     name="name"
-                    id="name"
                     required
-                    disabled={status === "submitting"}
+                    disabled={state.submitting}
                     className="w-full bg-background/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
+                    placeholder="Tu nombre"
                   />
+                  <ValidationError prefix="Name" field="name" errors={state.errors} className="text-red-400 text-xs" />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-slate-300">Email</label>
+                  <label htmlFor="email" className="text-sm font-medium text-slate-300">
+                    Email
+                  </label>
                   <input
+                    id="email"
                     type="email"
                     name="email"
-                    id="email"
                     required
-                    disabled={status === "submitting"}
+                    disabled={state.submitting}
                     className="w-full bg-background/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
+                    placeholder="tu@email.com"
                   />
+                  <ValidationError prefix="Email" field="email" errors={state.errors} className="text-red-400 text-xs" />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-medium text-slate-300">Mensaje</label>
+                  <label htmlFor="message" className="text-sm font-medium text-slate-300">
+                    ¿En qué puedo ayudarte?
+                  </label>
                   <textarea
-                    name="message"
                     id="message"
+                    name="message"
                     rows={4}
                     required
-                    disabled={status === "submitting"}
+                    disabled={state.submitting}
                     className="w-full bg-background/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none disabled:opacity-50"
+                    placeholder="Cuéntame un poco sobre tu proyecto..."
                   ></textarea>
+                  <ValidationError prefix="Message" field="message" errors={state.errors} className="text-red-400 text-xs" />
                 </div>
 
-                {status === "error" && (
+                {/* CORRECCIÓN: Quitamos .length porque state.errors es un objeto, no un array */}
+                {state.errors && (
                   <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 p-3 rounded-lg">
                     <AlertCircle className="w-4 h-4" />
-                    Hubo un error al enviar. Por favor intenta de nuevo.
+                    Hubo un error al enviar. Por favor revisa los campos.
                   </div>
                 )}
 
                 <button
                   type="submit"
-                  disabled={status === "submitting"}
+                  disabled={state.submitting}
                   className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {status === "submitting" ? (
+                  {state.submitting ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Enviando...
@@ -178,7 +162,7 @@ export function ContactForm() {
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      Enviar
+                      Enviar Mensaje
                     </>
                   )}
                 </button>

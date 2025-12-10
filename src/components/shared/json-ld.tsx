@@ -3,10 +3,10 @@ export function JsonLd() {
     "@context": "https://schema.org",
     "@type": "ProfessionalService", // Define tu negocio como servicio profesional
     "name": "Nativiza", // Tu marca comercial
-    "image": "https://nativiza.netlify.app/logo.png", // URL de tu logo (asegúrate de que existe en public/)
+    "image": "https://nativiza.vercel.app/logo.png", // URL de tu logo (asegúrate de que existe en public/)
     "description": "Estudio de desarrollo freelance especializado en convertir sitios web en aplicaciones móviles nativas usando Flutter y desarrollo web High-End con Next.js.",
-    "@id": "https://nativiza.netlify.app",
-    "url": "https://nativiza.netlify.app",
+    "@id": "https://nativiza.vercel.app",
+    "url": "https://nativiza.vercel.app",
     "telephone": "+34637762411", // Opcional: Tu teléfono de contacto
     "priceRange": "$$", // Rango de precios indicativo
     "address": {

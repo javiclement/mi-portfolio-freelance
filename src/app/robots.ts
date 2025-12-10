@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const URL = 'https://nativiza.netlify.app';
+const URL = 'https://nativiza.vercel.app';
 
 export default function robots(): MetadataRoute.Robots {
   return {

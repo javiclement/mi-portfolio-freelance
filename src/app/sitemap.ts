@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/blog';
 
 // Pon aquí tu dominio real cuando lo compres
-const URL = 'https://nativiza.dev';
+const URL = 'https://nativiza.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();

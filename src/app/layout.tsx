@@ -8,7 +8,7 @@ import { AnalyticsConsent } from "@/components/layout/analytics-consent";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const BASE_URL = "https://nativiza.netlify.app"; 
+const BASE_URL = "https://nativiza.vercel.app"; 
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   verification: {
-    google: "PDi4fee8K7AeR25dKQ-n9D5FSpiHUtWF0wJDwsID0dI",
+    google: "xnzM-o5inLr9ZPH0VI-EK-_ob6B9IeFZ-oBXLPy9Jjg",
   },
 };
 

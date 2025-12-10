@@ -5,41 +5,25 @@ import { ArrowRight, Code2, Smartphone, Zap } from "lucide-react";
 import Link from "next/link";
 
 export function HeroSection() {
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
+  // Variantes solo para elementos no críticos (decoración, botones)
   const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { 
-        duration: 0.5, 
-        ease: "easeOut" 
-      },
+      transition: { duration: 0.5, ease: "easeOut" },
     },
   };
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 pt-20">
-      {/* Background Gradients (Efecto Personal) */}
+      {/* Fondo estático para renderizado rápido */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] -z-10 opacity-40 pointer-events-none" />
       
-      <motion.div
-        className="max-w-4xl mx-auto text-center z-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={itemVariants} className="flex justify-center mb-6">
+      <div className="max-w-4xl mx-auto text-center z-10">
+        
+        {/* Badge: Animación CSS nativa (animate-fade-in) definida en tailwind.config */}
+        <div className="flex justify-center mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -49,29 +33,29 @@ export function HeroSection() {
               Open to Work / Disponible
             </span>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl md:text-7xl font-bold tracking-tight mb-8"
-        >
+        {/* Título Principal: SIN Framer Motion para el LCP. 
+            Usamos CSS puro para asegurar que Google lo lee al instante. */}
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 animate-fade-in opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
           <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/60">
             Creative
           </span>{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto]">
             Developer.
           </span>
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          variants={itemVariants}
-          className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
+        {/* Subtítulo: CSS Animation */}
+        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in opacity-0" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
           Transformo ideas en experiencias digitales. Especializado en crear Landing Pages modernas y <strong>convertir tu Web en una App Nativa</strong> (iOS/Android) con notificaciones push.
-        </motion.p>
+        </p>
 
+        {/* Botones: Aquí sí podemos usar Framer Motion porque no son texto LCP crítico */}
         <motion.div
-          variants={itemVariants}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Link
@@ -90,26 +74,31 @@ export function HeroSection() {
           </Link>
         </motion.div>
 
-        {/* Stack Simplificado (Actualizado) */}
+        {/* Stack: Animación diferida con Framer */}
         <motion.div
-          variants={itemVariants}
-          className="mt-20 pt-10 border-t border-white/5 grid grid-cols-3 gap-8 md:gap-16 opacity-60"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 0.6, transition: { staggerChildren: 0.1, delayChildren: 0.6 } }
+          }}
+          className="mt-20 pt-10 border-t border-white/5 grid grid-cols-3 gap-8 md:gap-16"
         >
-            <div className="flex flex-col items-center gap-2">
+            <motion.div variants={itemVariants} className="flex flex-col items-center gap-2">
                 <Code2 className="w-6 h-6 text-slate-400" />
                 <span className="text-xs uppercase tracking-wider text-slate-500">Modern Web</span>
-            </div>
-            {/* Elemento Actualizado */}
-            <div className="flex flex-col items-center gap-2">
+            </motion.div>
+            <motion.div variants={itemVariants} className="flex flex-col items-center gap-2">
                 <Smartphone className="w-6 h-6 text-slate-400" />
                 <span className="text-xs uppercase tracking-wider text-slate-500">Web to App</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
+            </motion.div>
+            <motion.div variants={itemVariants} className="flex flex-col items-center gap-2">
                 <Zap className="w-6 h-6 text-slate-400" />
                 <span className="text-xs uppercase tracking-wider text-slate-500">Performance</span>
-            </div>
+            </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }

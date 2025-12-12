@@ -1,0 +1,108 @@
+---
+title: "Segunda Alerta en 72h: Nuevos fallos críticos en Next.js y React (CVE-2025-55184)"
+date: "2025-12-12"
+description: "Si pensabas que habíamos terminado con el parche del martes, tengo malas noticias. Nuevas vulnerabilidades DoS y exposición de código detectadas hoy."
+tags: ["Ciberseguridad", "Next.js", "React 19", "Mantenimiento", "Urgente"]
+category: "Seguridad"
+---
+
+![Un desarrollador exhausto mirando múltiples pantallas](/images/blog/un-desarrollador-exhausto-mirando-multiples-pantallas.jpg)
+
+**Viernes, 12 de diciembre de 2025. Elche.**
+
+Te voy a ser sincero: tenía planes para este fin de semana. Después de la carrera contrarreloj del martes pasado para parchar la vulnerabilidad RCE en todos los proyectos de mis clientes, pensaba que la tormenta había pasado.
+
+Pero el desarrollo de software moderno a veces se siente como ese juego de feria de "golpea al topo" (*Whack-a-mole*). Apenas bajas el martillo sobre un problema, aparece otro.
+
+Hace unas horas, Vercel y el equipo de seguridad de React han emitido un nuevo boletín. **Si usas Next.js (versiones 13 a 16) o React 19, tienes que volver a actualizar. Hoy.**
+
+Aquí tienes el desglose sin tecnicismos innecesarios, directo al grano, como nos gusta en **Nativiza**.
+
+## ¿Qué ha pasado ahora?
+
+Cuando se descubre una vulnerabilidad grave (como la del martes), los investigadores de seguridad no se detienen; al contrario, empiezan a escarbar más profundo.
+
+Como resultado de esa investigación intensiva sobre *React Server Components*, han aparecido dos nuevos "regalos":
+
+1. **CVE-2025-55184 (Denegación de Servicio - DoS):** Imagina que alguien envía una petición maliciosa a tu web que hace que tu servidor se quede "pensando" infinitamente. Esto consume toda la CPU y la memoria, tirando tu web abajo para todos los demás usuarios. No entran a tu casa, pero bloquean la puerta para que nadie más pueda entrar.
+
+2. **CVE-2025-55183 (Exposición de Código Fuente):** Este fallo permite que, bajo ciertas condiciones, un atacante pueda ver el código compilado de tus *Server Actions*.
+   * **Lo bueno:** No expone tus secretos (claves de API, contraseñas) a menos que los hayas escrito en texto plano (hardcoded) en el código.
+   * **Lo malo:** Expone tu lógica de negocio. Tu competencia o un atacante puede ver *cómo* funciona tu backend para buscar otros fallos.
+
+<Callout type="info">
+**Nota importante:** A diferencia del fallo del martes, estos **NO permiten Ejecución Remota de Código (RCE)**. Es decir, no pueden tomar el control total de tu servidor, pero pueden tumbarlo o espiarlo.
+</Callout>
+
+## ¿A quién afecta exactamente?
+
+Básicamente, si te afectó la alerta del martes, te afecta esta. El espectro es amplio:
+
+* **Next.js:** Versiones 13.x, 14.x, 15.x y 16.x.
+* **React:** Versiones 19.0.0 a 19.2.1.
+* **Otros frameworks:** Si usas tecnologías que dependen de React Server Components (como Waku o implementaciones custom con Vite), también estás en riesgo.
+
+## La Solución: Actualización Obligatoria
+
+No hay excusas. Aunque tengas firewalls, la única solución real es actualizar el código.
+
+### Opción A: La vía rápida (Recomendada)
+
+El equipo de Next.js ha actualizado su herramienta de reparación automática para incluir estos nuevos parches. Abre tu terminal en la raíz de tu proyecto y ejecuta:
+
+```
+npx fix-react2shell-next
+```
+
+### Opción B: Actualización Manual
+
+Si prefieres tener el control total o la herramienta falla, debes actualizar tu `package.json` a las siguientes versiones mínimas seguras (o superiores):
+
+* **Next.js 14.x** → Actualizar a **14.2.35**
+* **Next.js 15.0.x** → Actualizar a **15.0.7**
+* **Next.js 15.1.x** → Actualizar a **15.1.11**
+* **Next.js 15.2.x** → Actualizar a **15.2.8**
+* **Next.js 15.3.x** → Actualizar a **15.3.8**
+* **Next.js 15.4.x** → Actualizar a **15.4.10**
+* **Next.js 15.5.x** → Actualizar a **15.5.9**
+* **Next.js 16.0.x** → Actualizar a **16.0.10**
+
+Una vez editado el `package.json`, no olvides el paso sagrado:
+
+```
+npm install
+# O si usas pnpm:
+pnpm install
+```
+
+Y después, despliega inmediatamente a producción:
+
+```
+vercel --prod
+```
+
+![Pantalla de ordenador mostrando una terminal](/images/blog/pantalla-ordenador-mostrando-terminal.jpg)
+
+## La Capa de Protección de Vercel
+
+Si alojas en Vercel (como recomiendo a la mayoría de mis clientes por estas mismas razones), tienes una ventaja táctica.
+
+Vercel ya ha desplegado reglas en su WAF (Web Application Firewall) para bloquear patrones de ataque conocidos que intenten explotar estas vulnerabilidades. Esto es un "chaleco antibalas", pero no significa que puedas ir por la calle sin cuidado. **El parche a nivel de código sigue siendo obligatorio** para evitar variantes del ataque que el firewall no detecte.
+
+## Mi opinión: La Calidad del Código es Estrategia de Negocio
+
+Llevo toda la semana repitiendo esto a mis clientes. La seguridad no es un "extra" que se compra cuando sobra presupuesto. Es la base que permite que tu negocio siga facturando mañana.
+
+Una vulnerabilidad de *Denegación de Servicio* (DoS) en un viernes por la tarde, justo antes de una campaña de ventas o un fin de semana de alto tráfico, puede costar miles de euros en pérdidas. No por robo de datos, sino por simple **inoperatividad**.
+
+Mantener un stack tecnológico moderno (como Next.js y React) tiene un precio: la vigilancia constante. La tecnología avanza rápido, y los vectores de ataque también.
+
+### ¿Te sientes abrumado?
+
+Si eres dueño de un negocio SaaS o una tienda online, tu trabajo debería ser vender y mejorar tu producto, no estar mirando boletines de seguridad un viernes por la la tarde ni peleándote con dependencias de `npm`.
+
+En **Nativiza**, me encargo de que estas cosas no te quiten el sueño. Mis clientes hoy están tranquilos porque sus sistemas se actualizaron antes de que ellos siquiera leyeran la noticia.
+
+Si quieres dejar de jugar al "golpea al topo" con la seguridad de tu web y necesitas una arquitectura robusta (o quizás estás pensando en dar el salto a una App nativa con Flutter para otro tipo de seguridad y rendimiento), aquí estoy.
+
+**[Agenda una consultoría rápida y revisemos tu infraestructura antes del lunes >>](/#contact)**

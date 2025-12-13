@@ -27,20 +27,24 @@ export default function BlogPage() {
             <Link 
               key={post.slug} 
               href={`/blog/${post.slug}`}
-              className="group block p-6 md:p-8 rounded-3xl bg-surface/50 border border-white/10 hover:border-primary/50 transition-all duration-300"
+              // CORRECCIÓN 1: Padding reducido en móvil (p-5) y normal en PC (md:p-8)
+              className="group block p-5 md:p-8 rounded-3xl bg-surface/50 border border-white/10 hover:border-primary/50 transition-all duration-300 w-full"
             >
-              <article>
+              <article className="w-full">
+                {/* CORRECCIÓN 2: flex-wrap para que los tags no ensanchen la tarjeta */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-4">
-                  <time>{formatDate(post.date)}</time>
-                  <div className="flex gap-2">
+                  <time className="shrink-0">{formatDate(post.date)}</time>
+                  <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-1 rounded-full bg-white/5 text-xs font-medium text-primary border border-white/5">
+                      <span key={tag} className="px-2 py-1 rounded-full bg-white/5 text-xs font-medium text-primary border border-white/5 whitespace-nowrap">
                         #{tag}
                       </span>
                     ))}
                   </div>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold mb-3 group-hover:text-primary transition-colors break-words">
+                
+                {/* CORRECCIÓN 3: break-words para evitar cortes de texto */}
+                <h2 className="text-xl md:text-2xl font-bold mb-3 group-hover:text-primary transition-colors break-words hyphens-auto">
                   {post.title}
                 </h2>
                 <p className="text-slate-400 leading-relaxed break-words">

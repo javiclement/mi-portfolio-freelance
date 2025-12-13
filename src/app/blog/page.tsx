@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllPosts } from "@/lib/blog"; // Usamos la librería local, no Sanity
+import { getAllPosts } from "@/lib/blog";
 import { formatDate } from "@/lib/utils";
 
 export const metadata = {

@@ -1,21 +1,18 @@
 import { getPostBySlug, getAllPosts } from "@/lib/blog";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { formatDate } from "@/lib/utils";
+import { Metadata } from "next"; // IMPORTANTE: Importamos el tipo Metadata
 
-// 1. Definimos los componentes personalizados para MDX
-// Esto soluciona el error "Expected component Callout to be defined"
+// 1. Componentes MDX (Sin cambios, tu estilo estaba bien)
 const components = {
-  // Si en el Markdown aparece <Callout>, usamos este diseño:
   Callout: (props: any) => (
     <div className="my-6 p-4 bg-indigo-900/30 border-l-4 border-indigo-500 rounded-r-lg text-slate-200">
       {props.children}
     </div>
   ),
-  // Personalizamos las imágenes para que usen Next/Image y sean responsivas
   img: (props: any) => (
     <div className="my-8 relative w-full h-auto rounded-xl overflow-hidden shadow-lg border border-white/10">
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -23,15 +20,16 @@ const components = {
         {...props} 
         className="w-full h-auto object-cover" 
         loading="lazy"
+        alt={props.alt || "Imagen del artículo"} // Mejora de accesibilidad/SEO
       />
     </div>
   ),
-  // Personalizamos los enlaces para que se vean mejor
   a: (props: any) => (
     <a {...props} className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition-colors" />
   ),
 };
 
+// 2. Generación de rutas estáticas (SSG) - Esto estaba bien
 export async function generateStaticParams() {
   const posts = getAllPosts();
   return posts.map((post) => ({
@@ -39,6 +37,35 @@ export async function generateStaticParams() {
   }));
 }
 
+// 3. NUEVO: Generación de Metadatos para SEO (La pieza que faltaba)
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const slug = decodeURIComponent(params.slug);
+  const post = getPostBySlug(slug);
+
+  if (!post) {
+    return {
+      title: "Artículo no encontrado",
+    };
+  }
+
+  return {
+    title: post.title, // El título exacto del post
+    description: post.description, // La descripción del post para Google
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      type: "article",
+      publishedTime: post.date,
+      authors: ["Nativiza"], // Opcional
+    },
+    alternates: {
+      canonical: `/blog/${slug}`, // URL Canónica para evitar duplicados
+    },
+  };
+}
+
+// 4. Página Principal (Renderizado)
 export default async function PostPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
   const slug = decodeURIComponent(params.slug);
@@ -48,8 +75,27 @@ export default async function PostPage(props: { params: Promise<{ slug: string }
     notFound();
   }
 
+  // Schema.org estructurado para artículos (Boost extra de SEO)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "datePublished": post.date,
+    "description": post.description,
+    "author": {
+      "@type": "Organization",
+      "name": "Nativiza"
+    }
+  };
+
   return (
     <article className="min-h-screen pt-32 pb-20 px-4">
+      {/* Inyectamos datos estructurados invisibles */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="max-w-3xl mx-auto">
         <Link 
           href="/blog"
@@ -74,7 +120,6 @@ export default async function PostPage(props: { params: Promise<{ slug: string }
           </time>
         </header>
 
-        {/* Pasamos los 'components' al renderizador MDX */}
         <div className="prose prose-invert prose-lg max-w-none prose-headings:font-bold prose-p:text-slate-300 prose-p:leading-relaxed prose-li:text-slate-300">
           <MDXRemote source={post.content} components={components} />
         </div>

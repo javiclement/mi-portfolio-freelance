@@ -3,6 +3,7 @@
 import { useForm, ValidationError } from '@formspree/react';
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Mail, User, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import Link from "next/link"; // Importamos Link para la navegación interna
 
 export function ContactForm() {
   // PEGA AQUÍ TU ID DE FORMSPREE (ej: "mznqkpwl")
@@ -37,7 +38,7 @@ export function ContactForm() {
               </div>
               <div>
                 <h4 className="text-white font-medium">Email</h4>
-                <p className="text-slate-400 text-sm">javiclement@gmail.com</p>
+                <p className="text-slate-400 text-sm">hola@nativiza.dev</p>
               </div>
             </div>
 
@@ -76,7 +77,6 @@ export function ContactForm() {
                 <p className="text-slate-400">
                   Gracias por contactar. Te responderé en menos de 24 horas.
                 </p>
-                {/* Nota: Formspree no tiene método de reset fácil, así que recargar la página es lo más simple si quieren enviar otro */}
                 <button
                   onClick={() => window.location.reload()}
                   className="mt-6 text-primary hover:text-white transition-colors text-sm font-medium"
@@ -141,7 +141,24 @@ export function ContactForm() {
                   <ValidationError prefix="Message" field="message" errors={state.errors} className="text-red-400 text-xs" />
                 </div>
 
-                {/* CORRECCIÓN: Quitamos .length porque state.errors es un objeto, no un array */}
+                {/* CASILLA DE VERIFICACIÓN RGPD */}
+                <div className="flex items-start gap-3 pt-2">
+                  <input
+                    id="privacy"
+                    type="checkbox"
+                    name="privacy"
+                    required // Esto impide enviar el formulario si no se marca
+                    className="mt-1 w-4 h-4 rounded border-slate-600 bg-slate-800/50 text-primary focus:ring-primary focus:ring-offset-slate-900 cursor-pointer accent-indigo-500"
+                  />
+                  <label htmlFor="privacy" className="text-xs text-slate-400 leading-relaxed cursor-pointer select-none">
+                    He leído y acepto la{" "}
+                    <Link href="/legal/privacidad" className="text-indigo-400 hover:text-indigo-300 underline decoration-indigo-400/30 hover:decoration-indigo-300 transition-colors">
+                      política de privacidad
+                    </Link>
+                    {" "}y el tratamiento de mis datos para gestionar esta solicitud.
+                  </label>
+                </div>
+
                 {state.errors && (
                   <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 p-3 rounded-lg">
                     <AlertCircle className="w-4 h-4" />
@@ -152,7 +169,7 @@ export function ContactForm() {
                 <button
                   type="submit"
                   disabled={state.submitting}
-                  className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed group"
                 >
                   {state.submitting ? (
                     <>
@@ -161,7 +178,7 @@ export function ContactForm() {
                     </>
                   ) : (
                     <>
-                      <Send className="w-5 h-5" />
+                      <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       Enviar Mensaje
                     </>
                   )}

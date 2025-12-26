@@ -1,10 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Activa la optimización de CSS Crítico para eliminar el bloqueo de renderizado
+  // Eliminamos configuración de imágenes de Sanity ya que no se usa
+  images: {
+    remotePatterns: [],
+  },
   experimental: {
-    optimizeCss: true, 
-    // Limpia las importaciones de estas librerías para reducir el JS inicial
-    optimizePackageImports: ['lucide-react', 'framer-motion'],
+    // Mantenemos la optimización de librerías
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'date-fns'],
+    
+    // CONFIGURACIÓN AGRESIVA DE CSS
+    optimizeCss: {
+      // 'pruneSource': true fuerza a que los estilos inyectados se borren del archivo externo.
+      // Si el archivo es pequeño, esto a menudo elimina la necesidad de cargar el .css bloqueante por completo.
+      pruneSource: true,
+    },
   },
 };
 
